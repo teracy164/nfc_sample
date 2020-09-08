@@ -28,7 +28,11 @@
                     }
                 });
             }
-            const startNFC = () => readNFC();
+            const startNFC = () => readNFC().then(result => {
+                document.getElementById('result').innerText = JSON.stringify(result);
+            }).catch(err => {
+                document.getElementById('result').innerText = JSON.stringify(err);
+            });
 
             window.onload = () => {
                 if (isSupportedNFC()) {
@@ -42,9 +46,9 @@
         </script>
     </head>
     <body>
-        <div>
+        <button id="btn" onclick="startNFC()">start NFC</button>
+        <div id="result">
 
         </div>
-        <button id="btn" onclick="startNFC()">start NFC</button>
     </body>
 </html>
