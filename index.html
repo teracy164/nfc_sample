@@ -29,27 +29,19 @@
                             参考：https://w3c.github.io/web-nfc/#the-scan-method
                         */
                         await reader.scan();
-                        log('init reader scan')
+                        log('scan start success.')
                         reader.onreading = event => {
-                            log('onreading')
-                            log(event)
+                            log(`onreading. ${event}`)
                             console.log(event);
                             //resolve(event);
                         }
                         reader.onerror = event => {
-                            log('onerror')
-                            log(event)
+                            log(`onerror. ${event}`);
                             console.error(event);
                             //reject(event);
                         }
-                        reader.addEventListener('reading', ({ serialNumber, message }) => {
-                            const record = message.records[0]
-                            const { data, recordType } = record
-                            // recordTypeごとにdecode処理を実行する
-                            log(record);
-                        })
                     } catch (err) {
-                        log(err)
+                        log(`scan error. ${err}`)
                         console.error(err);
                         reject(JSON.stringify(err));
                     }
@@ -59,10 +51,8 @@
                 const btnArea = document.getElementById('btn-area');
                 btnArea.setAttribute('disabled', true);
                 readNFC().then(result => {
-                    log(result)
                     btnArea.setAttribute('disabled');
                 }).catch(err => {
-                    log(err)
                     btnArea.removeAttribute('disabled');
                 })
             };
