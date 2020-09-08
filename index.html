@@ -33,12 +33,12 @@
                         reader.onreading = event => {
                             log('onreading')
                             console.log(event);
-                            resolve(event);
+                            //resolve(event);
                         }
                         reader.onerror = event => {
                             log('onerror')
                             console.error(event);
-                            reject(event);
+                            //reject(event);
                         }
                         reader.addEventListener('reading', ({ serialNumber, message }) => {
                             const record = message.records[0]
@@ -54,15 +54,22 @@
                 });
             }
             const startNFC = () => {
-                document.getElementById('btn').setAttribute('disabled', true);
+                const btnArea = document.getElementById('btn');
+                btnArea.setAttribute('disabled', true);
                 readNFC().then(result => {
                     log(result)
-                    document.getElementById('btn').setAttribute('disabled');
+                    btnArea.setAttribute('disabled');
                 }).catch(err => {
                     log(err)
-                    document.getElementById('btn').removeAttribute('disabled');
+                    btnArea.removeAttribute('disabled');
                 })
             };
+
+            const abortNFC = () => {
+                const controller = new AbortController();
+                controller.abort();
+                log('stop');
+            }
 
             window.onload = () => {
                 if (isEnabledNFC()) {
@@ -80,8 +87,9 @@
             以下にアクセスし、Enabledに設定してください<br>
             chrome://flags/#enable-experimental-web-platform-features
         </div>
-        <div style="padding: 10px; text-align: center;">
-            <button id="btn" onclick="startNFC()">start NFC</button>
+        <div style="padding: 10px; text-align: center;" id="btn-area">
+            <button onclick="startNFC()">start NFC</button>
+            <button onclick="abortNFC()">abort</button>
         </div>
         <div id="result">
 
