@@ -30,15 +30,21 @@
                         */
                         await reader.scan();
                         log('scan start success.')
+                        const finish = () => {
+                            abortNFC();
+                            log('read finish.')
+                        }
                         reader.onreading = event => {
                             log(`onreading. ${event}`)
                             console.log(event);
-                            //resolve(event);
+                            finish();
+                            resolve(event);
                         }
                         reader.onerror = event => {
                             log(`onerror. ${event}`);
                             console.error(event);
-                            //reject(event);
+                            finish();
+                            reject(event);
                         }
                     } catch (err) {
                         log(`scan error. ${err}`)
