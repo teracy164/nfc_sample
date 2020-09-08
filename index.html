@@ -1,7 +1,10 @@
 <html>
     <head>
         <script>
-            const isSupportedNFC = () => {
+            const isEnabledNFC = () => {
+                /*
+                    参考：https://w3c.github.io/web-nfc/#feature-support
+                */
                 if ('NDEFReader' in window) {
                     return true;
                 } else {
@@ -9,28 +12,35 @@
                     return false;
                 }
             }
+            const log = (msg) => {
+                const result = document.getElementById('result');
+                result.innerText += result.innerText + '¥n' + JSON.stringify(msg);
+            }
             const readNFC = async () => {
                 return new Promise(async (resolve, reject) => {
                     /*
                         参考：https://w3c.github.io/web-nfc/#feature-support
                     */
                     try {
+                        log('start read NFC')
                         const reader = new NDEFReader();
                         await reader.scan();
+                        log('init reader scan')
 
                         reader.onreading = event => {
-                            const result = document.getElementById('result');
-                            result.innerText += result.innerText +'¥n' + JSON.stringify(event);
+                            log('onreading')
                             console.log(event);
                             resolve(event);
                         }
                         reader.onerror = event => {
+                            log('onerror')
                             console.error(event);
                             reject(event);
                         }
                     } catch (err) {
+                        log(err)
                         console.error(err);
-                        reject();
+                        reject(JSON.stringify(err));
                     }
                 });
             }
@@ -47,7 +57,7 @@
             };
 
             window.onload = () => {
-                if (isSupportedNFC()) {
+                if (isEnabledNFC()) {
                     console.log('nfc supported.')
                     document.getElementById('btn').style.display='';
                 } else {
