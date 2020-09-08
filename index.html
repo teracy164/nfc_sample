@@ -16,6 +16,7 @@
                 const result = document.getElementById('result');
                 result.innerHTML += '<BR>' + JSON.stringify(msg);
             }
+            const controller = new AbortController();
             const readNFC = async () => {
                 return new Promise(async (resolve, reject) => {
                     /*
@@ -28,7 +29,7 @@
                             scan method
                             参考：https://w3c.github.io/web-nfc/#the-scan-method
                         */
-                        await reader.scan();
+                        await reader.scan({ signal: controller.signal });
                         log('scan start success.')
                         const finish = () => {
                             abortNFC();
@@ -64,7 +65,6 @@
             };
 
             const abortNFC = () => {
-                const controller = new AbortController();
                 controller.abort();
                 log('stop');
             }
