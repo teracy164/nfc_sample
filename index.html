@@ -14,7 +14,7 @@
             }
             const log = (msg) => {
                 const result = document.getElementById('result');
-                result.innerText += result.innerText + '¥n' + JSON.stringify(msg);
+                result.innerHTML += '<BR>' + JSON.stringify(msg);
             }
             const readNFC = async () => {
                 return new Promise(async (resolve, reject) => {
@@ -30,7 +30,6 @@
                         */
                         await reader.scan();
                         log('init reader scan')
-
                         reader.onreading = event => {
                             log('onreading')
                             console.log(event);
@@ -56,12 +55,11 @@
             }
             const startNFC = () => {
                 document.getElementById('btn').setAttribute('disabled', true);
-                document.getElementById('result').innerText = 'Loading';
                 readNFC().then(result => {
-                    document.getElementById('result').innerText = JSON.stringify(result);
+                    log(result)
                     document.getElementById('btn').setAttribute('disabled');
                 }).catch(err => {
-                    document.getElementById('result').innerText = JSON.stringify(err);
+                    log(err)
                     document.getElementById('btn').removeAttribute('disabled');
                 })
             };
