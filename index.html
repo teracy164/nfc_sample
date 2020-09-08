@@ -24,6 +24,10 @@
                     try {
                         log('start read NFC')
                         const reader = new NDEFReader();
+                        /*
+                            scan method
+                            参考：https://w3c.github.io/web-nfc/#the-scan-method
+                        */
                         await reader.scan();
                         log('init reader scan')
 
@@ -37,6 +41,12 @@
                             console.error(event);
                             reject(event);
                         }
+                        reader.addEventListener('reading', ({ serialNumber, message }) => {
+                            const record = message.records[0]
+                            const { data, recordType } = record
+                            // recordTypeごとにdecode処理を実行する
+                            log(record);
+                        })
                     } catch (err) {
                         log(err)
                         console.error(err);
