@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <script>
+            const readNFC = async () => {
+                return new Promise((resolve, reject) => {
+                    const reader = new NDEFReader();
+                    reader.addEventListener('reading', ({ serialNumber, message }) => {
+                        const record = message.records[0]
+                        const { data, recordType } = record
+                        // recordTypeごとにdecode処理を実行する
+                        resolve(message);
+                    })
+                    reader.addEventListener('error', (error) => {
+                        reject(error);
+                    });
+
+                    reader.scan();
+                });
+            }
+            const startNFC = async () => {
+                const result = await readNFC();
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+
+        </div>
+        <button onclick="startNFC()">start NFC</button>
+    </body>
+</html>
