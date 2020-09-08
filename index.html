@@ -28,11 +28,17 @@
                     }
                 });
             }
-            const startNFC = () => readNFC().then(result => {
-                document.getElementById('result').innerText = JSON.stringify(result);
-            }).catch(err => {
-                document.getElementById('result').innerText = JSON.stringify(err);
-            });
+            const startNFC = () => {
+                document.getElementById('btn').setAttribute('disabled', true);
+                document.getElementById('result').innerText = 'Loading';
+                readNFC().then(result => {
+                    document.getElementById('result').innerText = JSON.stringify(result);
+                    document.getElementById('btn').setAttribute('disabled', false);
+                }).catch(err => {
+                    document.getElementById('result').innerText = JSON.stringify(err);
+                    document.getElementById('btn').removeAttribute('disabled');
+                })
+            };
 
             window.onload = () => {
                 if (isSupportedNFC()) {
