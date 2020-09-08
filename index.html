@@ -32,11 +32,13 @@
                         log('init reader scan')
                         reader.onreading = event => {
                             log('onreading')
+                            log(event)
                             console.log(event);
                             //resolve(event);
                         }
                         reader.onerror = event => {
                             log('onerror')
+                            log(event)
                             console.error(event);
                             //reject(event);
                         }
