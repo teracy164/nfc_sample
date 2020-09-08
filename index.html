@@ -10,6 +10,9 @@
             }
             const readNFC = async () => {
                 return new Promise(async (resolve, reject) => {
+                    /*
+                        参考：https://w3c.github.io/web-nfc/#feature-support
+                    */
                     try {
                         const reader = new NDEFReader();
                         await reader.scan();
@@ -33,7 +36,7 @@
                 document.getElementById('result').innerText = 'Loading';
                 readNFC().then(result => {
                     document.getElementById('result').innerText = JSON.stringify(result);
-                    document.getElementById('btn').setAttribute('disabled', false);
+                    document.getElementById('btn').setAttribute('disabled');
                 }).catch(err => {
                     document.getElementById('result').innerText = JSON.stringify(err);
                     document.getElementById('btn').removeAttribute('disabled');
@@ -52,7 +55,9 @@
         </script>
     </head>
     <body>
-        <button id="btn" onclick="startNFC()">start NFC</button>
+        <div style="padding: 10px; text-align: center;">
+            <button id="btn" onclick="startNFC()">start NFC</button>
+        </div>
         <div id="result">
 
         </div>
