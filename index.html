@@ -5,6 +5,7 @@
                 if ('NDEFReader' in window) {
                     return true;
                 } else {
+                    document.getElementById('notice').style.display = '';
                     return false;
                 }
             }
@@ -18,6 +19,8 @@
                         await reader.scan();
 
                         reader.onreading = event => {
+                            const result = document.getElementById('result');
+                            result.innerText += result.innerText +'¥n' + JSON.stringify(event);
                             console.log(event);
                             resolve(event);
                         }
@@ -55,6 +58,10 @@
         </script>
     </head>
     <body>
+        <div id="notice" style="display: none">
+            以下にアクセスし、Enabledに設定してください<br>
+            chrome://flags/#enable-experimental-web-platform-features
+        </div>
         <div style="padding: 10px; text-align: center;">
             <button id="btn" onclick="startNFC()">start NFC</button>
         </div>
