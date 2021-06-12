@@ -1,96 +1,108 @@
 <html>
-    <head>
-        <script>
-            const isEnabledNFC = () => {
-                /*
-                    参考：https://w3c.github.io/web-nfc/#feature-support
-                */
-                if ('NDEFReader' in window) {
-                    return true;
-                } else {
-                    document.getElementById('notice').style.display = '';
-                    return false;
-                }
-            }
-            const log = (msg) => {
-                const result = document.getElementById('result');
-                result.innerHTML += '<BR>' + JSON.stringify(msg);
-            }
-            const controller = new AbortController();
-            const readNFC = async () => {
-                return new Promise(async (resolve, reject) => {
-                    /*
-                        参考：https://w3c.github.io/web-nfc/#feature-support
-                    */
-                    try {
-                        log('start read NFC')
-                        const reader = new NDEFReader();
-                        /*
+  <head>
+    <script>
+      const isEnabledNFC = () => {
+        /*
+            参考：https://w3c.github.io/web-nfc/#feature-support
+        */
+        if ('NDEFReader' in window) {
+          return true;
+        } else {
+          document.getElementById('notice').style.display = '';
+          return false;
+        }
+      };
+      const log = (msg) => {
+        const result = document.getElementById('result');
+        result.innerHTML += '<BR>' + JSON.stringify(msg);
+      };
+      //   const controller = new AbortController();
+      const readNFC = async () => {
+        return new Promise(async (resolve, reject) => {
+          /*
+            参考：https://w3c.github.io/web-nfc/#feature-support
+          */
+          try {
+            const ndef = new NDEFReader();
+            await ndef.scan();
+            log('scan started');
+            /*
                             scan method
                             参考：https://w3c.github.io/web-nfc/#the-scan-method
                         */
-                        await reader.scan({ signal: controller.signal });
-                        log('scan start success.')
-                        const finish = () => {
-                            abortNFC();
-                            log('read finish.')
-                        }
-                        reader.onreading = event => {
-                            log(`onreading. ${event}`)
-                            console.log(event);
-                            finish();
-                            resolve(event);
-                        }
-                        reader.onerror = event => {
-                            log(`onerror. ${event}`);
-                            console.error(event);
-                            finish();
-                            reject(event);
-                        }
-                    } catch (err) {
-                        log(`scan error. ${err}`)
-                        console.error(err);
-                        reject(JSON.stringify(err));
-                    }
+            // await reader.scan({ signal: controller.signal });
+            // const finish = () => {
+            //   abortNFC();
+            //   log('read finish.');
+            // };
+            // reader.onreading = (event) => {
+            //   log(`onreading. ${JSON.stringify(event)}`);
+            //   console.log(event);
+            //   finish();
+            //   resolve(event);
+            // };
+            // reader.onerror = (event) => {
+            //   log(`onerror. ${JSON.stringify(event)}`);
+            //   console.error(event);
+            //   finish();
+            //   reject(event);
+            // };
+            ndef.addEventListener('readingerror', (error) => {
+              log(`error: ${JSON.stringify(error)}`);
+            });
+
+            ndef.addEventListener('reading', ({ message, serialNumber }) => {
+              log(`read data:  <Serial Number>${serialNumber}`);
+              if (message.records?.length) {
+                message.records?.forEach((record) => {
+                  log(JSON.stringify(record));
                 });
-            }
-            const startNFC = () => {
-                const btnArea = document.getElementById('btn-area');
-                btnArea.setAttribute('disabled', true);
-                readNFC().then(result => {
-                    btnArea.setAttribute('disabled');
-                }).catch(err => {
-                    btnArea.removeAttribute('disabled');
-                })
-            };
+              }
+            });
+          } catch (err) {
+            log(`scan error. ${err}`);
+            console.error(err);
+            reject(JSON.stringify(err));
+          }
+        });
+      };
+      const startNFC = () => {
+        const btnArea = document.getElementById('btn-area');
+        btnArea.setAttribute('disabled', true);
+        readNFC()
+          .then((result) => {
+            btnArea.setAttribute('disabled');
+          })
+          .catch((err) => {
+            btnArea.removeAttribute('disabled');
+          });
+      };
 
-            const abortNFC = () => {
-                controller.abort();
-                log('stop');
-            }
+      const abortNFC = () => {
+        controller.abort();
+        log('stop');
+      };
 
-            window.onload = () => {
-                if (isEnabledNFC()) {
-                    console.log('nfc supported.')
-                    document.getElementById('btn').style.display='';
-                } else {
-                    console.log('nfc not supported.')
-                    document.getElementById('btn').style.display='none';
-                }                
-            }
-        </script>
-    </head>
-    <body>
-        <div id="notice" style="display: none">
-            以下にアクセスし、Enabledに設定してください<br>
-            chrome://flags/#enable-experimental-web-platform-features
-        </div>
-        <div style="padding: 10px; text-align: center;" id="btn-area">
-            <button onclick="startNFC()">start NFC</button>
-            <button onclick="abortNFC()">abort</button>
-        </div>
-        <div id="result">
-
-        </div>
-    </body>
+      window.onload = () => {
+        if (isEnabledNFC()) {
+          console.log('nfc supported.');
+          document.getElementById('btn').style.display = '';
+        } else {
+          console.log('nfc not supported.');
+          document.getElementById('btn').style.display = 'none';
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="notice" style="display: none">
+      以下にアクセスし、Enabledに設定してください<br />
+      chrome://flags/#enable-experimental-web-platform-features
+    </div>
+    <div style="padding: 10px; text-align: center" id="btn-area">
+      <button onclick="startNFC()">start NFC</button>
+      <!-- <button onclick="abortNFC()">abort</button> -->
+    </div>
+    <div id="result"></div>
+  </body>
 </html>
