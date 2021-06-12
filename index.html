@@ -52,10 +52,11 @@
             });
 
             ndef.addEventListener('reading', ({ message, serialNumber }) => {
-              log(`read data:  <Serial Number>${serialNumber}`);
+              log(`read data:  [Serial Number]${serialNumber}`);
+              log(JSON.stringify(message));
               if (message.records?.length) {
-                message.records?.forEach((record) => {
-                  log(JSON.stringify(record));
+                message.records?.forEach((record, index) => {
+                  log(`record${index + 1} ${JSON.stringify(record)}`);
                 });
               }
             });
@@ -100,7 +101,7 @@
       chrome://flags/#enable-experimental-web-platform-features
     </div>
     <div style="padding: 10px; text-align: center" id="btn-area">
-      <button onclick="startNFC()">start NFC</button>
+      <button onclick="startNFC()" style="padding: 20px">start NFC</button>
       <!-- <button onclick="abortNFC()">abort</button> -->
     </div>
     <div id="result"></div>
